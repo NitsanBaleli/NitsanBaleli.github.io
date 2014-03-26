@@ -7,18 +7,18 @@ module.exports = (grunt) ->
 				options:
 					join: true
 				files: 
-					'js/app.js': 'coffee/app.coffee'
+					'js/app.js': 'src/coffee/app.coffee'
 
 		sass:
 			dev:
 				files:
-					'css/style.css': 'sass/style.sass'
+					'css/style.css': 'src/sass/style.sass'
 
 		jade:
 			dev:
 				options:
 					pretty: true
-				files: 'index.html': 'index.jade'
+				files: 'index.html': 'src/index.jade'
 				# files: [
 				# 	expand: true
 				# 	cwd: 'app/'
@@ -28,22 +28,22 @@ module.exports = (grunt) ->
 				# ]
 		watch:
 			coffee:
-				files: '**/*.coffee'
+				files: 'src/**/*.coffee'
 				tasks: 'coffee:dev'
 			sass:
-				files: 'sass/*.sass'
+				files: 'src/sass/*.sass'
 				tasks: 'sass:dev'
 
 			jade:
-				files: '*.jade'
+				files: 'src/*.jade'
 				tasks: 'jade:dev'
 
 			livereload:
 			  options:
 			    livereload: true
 			  files: [
-			    'style.css'
-			    'app.js'
+			    'css/style.css'
+			    'js/app.js'
 			  ]
 
 
