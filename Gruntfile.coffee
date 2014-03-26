@@ -11,9 +11,8 @@ module.exports = (grunt) ->
 
 		sass:
 			dev:
-				options:
-					sassDir: 'sass'
-					cssDir:  'css'
+				files:
+					'css/style.css': 'sass/style.sass'
 
 		jade:
 			dev:
@@ -32,7 +31,7 @@ module.exports = (grunt) ->
 				files: '*.coffee'
 				tasks: 'coffee:dev'
 			sass:
-				files: '*.sass'
+				files: 'sass/*.sass'
 				tasks: 'sass:dev'
 
 			jade:
