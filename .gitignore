@@ -2,9 +2,3 @@ bower_components/
 node_modules/
 .sass-cache/
 .git/
-js/
-css/
-
-*.js
-*.html
-*.css
