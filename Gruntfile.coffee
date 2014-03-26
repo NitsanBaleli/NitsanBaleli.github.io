@@ -7,7 +7,7 @@ module.exports = (grunt) ->
 				options:
 					join: true
 				files: 
-					'app.js': 'app.coffee'
+					'js/app.js': 'coffee/app.coffee'
 
 		sass:
 			dev:
@@ -28,7 +28,7 @@ module.exports = (grunt) ->
 				# ]
 		watch:
 			coffee:
-				files: '*.coffee'
+				files: '**/*.coffee'
 				tasks: 'coffee:dev'
 			sass:
 				files: 'sass/*.sass'
