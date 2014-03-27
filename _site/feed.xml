@@ -6,8 +6,8 @@
     <atom:link href="http://nitsanbaleli.github.io//feed.xml" rel="self" type="application/rss+xml" />
     <description>A place to share my thoughts and code</description>
     <language>en-us</language>
-    <pubDate>Thu, 27 Mar 2014 19:00:32 +0200</pubDate>
-    <lastBuildDate>Thu, 27 Mar 2014 19:00:32 +0200</lastBuildDate>
+    <pubDate>Thu, 27 Mar 2014 19:02:20 +0200</pubDate>
+    <lastBuildDate>Thu, 27 Mar 2014 19:02:20 +0200</lastBuildDate>
 
     
       <item>
@@ -23,6 +23,8 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;hr&gt;
+
+&lt;p&gt;זוהי דוגמא של קוד php&lt;/p&gt;
 
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;php&quot;&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;?php&lt;/span&gt;
   &lt;span class=&quot;nv&quot;&gt;$result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;jekyll for the win!&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;

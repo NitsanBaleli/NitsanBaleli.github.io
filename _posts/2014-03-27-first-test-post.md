@@ -12,7 +12,7 @@ function myFunction(x) {
 {% endhighlight %}
 
 ---
-
+זוהי דוגמא של קוד php
 {% highlight php %}
 <?php
   $result = 'jekyll for the win!';
@@ -20,3 +20,4 @@ function myFunction(x) {
   echo 'done';
 ?>
 {% endhighlight %}
+
