@@ -2,8 +2,8 @@ markdown: redcarpet
 pygments: true
 permalink: /:title
 
-url:
-baseurl:
+url: http://nitsanbaleli.github.io/
+baseurl: 
 
 redcarpet:
   extensions: [strikethrough, tables]

@@ -3,4 +3,4 @@ layout: page
 title: About
 ---
 
-Nothing yet :(
+Im Nitsan Baleli, curious Israeli web-developer
