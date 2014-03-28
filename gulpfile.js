@@ -16,7 +16,7 @@ gulp.task('scripts', function () {
   gulp.src(paths.scripts)
       .pipe(coffee({ bare: true }).on('error', gutil.log))
       .pipe(uglify())
-      .pipe(concat('main.js'))
+      .pipe(concat('app.js'))
       .pipe(gulp.dest('./public/js'));
 });
 

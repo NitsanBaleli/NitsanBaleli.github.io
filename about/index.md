@@ -3,4 +3,7 @@ layout: page
 title: About
 ---
 
-Im Nitsan Baleli, curious Israeli web-developer
+Curious webdev from sunny Israel,
+
+This is where I write about stuff I learn.
+
