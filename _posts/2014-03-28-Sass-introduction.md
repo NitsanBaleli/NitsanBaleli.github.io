@@ -68,7 +68,7 @@ div.wrapper {
 ---
 
 Sass supports many nice features such as:
-Variables, Loops, Includes, Color and String opertaions as well as Math opertaions.
+Variables, Loops, Includes, Color and String operations as well as Math operations.
 
 See the [documentation](http://sass-lang.com/documentation/file.SASS_REFERENCE.html) for a clear list of all you can do.
 
