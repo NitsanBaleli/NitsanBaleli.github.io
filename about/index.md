@@ -5,5 +5,5 @@ title: About
 
 Curious webdev from sunny Israel,
 
-This is where I write about stuff I learn.
+This is where I write about things I learn.
 
