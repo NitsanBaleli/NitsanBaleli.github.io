@@ -3,7 +3,8 @@ layout: post
 title: Introduction to Sass (Syntactically Awesome StyleSheets)
 ---
 
-Writing CSS can be very tedious.  
+Writing CSS can be very tedious. 
+ 
 If you ever wrote a large CSS file you probably found yourself repeating rules all over the place,
 ending up with a file that is very long and difficult to debug.
 
