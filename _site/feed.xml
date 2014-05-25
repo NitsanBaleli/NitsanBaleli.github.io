@@ -6,8 +6,8 @@
     <atom:link href="http://nitsanbaleli.github.io//feed.xml" rel="self" type="application/rss+xml" />
     <description>A place to share my thoughts and code</description>
     <language>en-us</language>
-    <pubDate>Thu, 01 May 2014 12:11:09 +0300</pubDate>
-    <lastBuildDate>Thu, 01 May 2014 12:11:09 +0300</lastBuildDate>
+    <pubDate>Sun, 25 May 2014 22:09:54 +0300</pubDate>
+    <lastBuildDate>Sun, 25 May 2014 22:09:54 +0300</lastBuildDate>
 
     
       <item>
@@ -15,8 +15,9 @@
         <link>http://nitsanbaleli.github.io//2014/03/28/Sass-introduction.html</link>
         <pubDate>Fri, 28 Mar 2014 00:00:00 +0200</pubDate>
         <author>Nitsan Baleli</author>
-        <description>&lt;p&gt;Writing CSS can be very tedious.&lt;br&gt;
-If you ever wrote a large CSS file you probably found yourself repeating rules all over the place,
+        <description>&lt;p&gt;Writing CSS can be very tedious. &lt;/p&gt;
+
+&lt;p&gt;If you ever wrote a large CSS file you probably found yourself repeating rules all over the place,
 ending up with a file that is very long and difficult to debug.&lt;/p&gt;
 
 &lt;p&gt;And to tell the truth, CSS is kind of dumb. &lt;/p&gt;
