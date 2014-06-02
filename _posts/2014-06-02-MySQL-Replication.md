@@ -8,9 +8,12 @@ title: MySQL Replication (Master->Slave)
 # Step 1 - Configure Master
 
 Open the mysql configuration file on the Master:
+
 ```bash
 sudo nano /etc/mysql/my.cnf
 ```
+
+
 
 The first step is to change the bind-address of the server to the actual WAN/LAN address.
 Change the line that looks like this:
@@ -24,7 +27,7 @@ To use the right IP (replace x.x.x.x with the real number)
 bind-address = x.x.x.x
 ```
 Next we need to set server-id, and give our server a unique number.
-change this line - make sure its not commented (remove the # from the head of the line).
+change this line - make sure its not commented (remove the # preceding it).
 Make sure this number is unique to this server
 
 
@@ -40,10 +43,11 @@ Change log_bin value to point to the log file, where all changes are kept, so re
 log_bin = /var/log/mysql/mysql-bin.log
 ```
 Now we need to tell the server what DB we want replicated.
-This line can be repeated for use of more than one DB:
+This line can be repeated for use of more than one DB.  
+(**Leaving this line commented will result in replication of the all databases without any additional editing of the configuration file.**)
 
 ```bash
-binlog_do_db = DBtoReplicate
+binlog_do_db = newdatabase
 ```
 
 Save and exit the configuration file.
@@ -52,4 +56,72 @@ Restart MySQL:
 
 ```bash
 sudo service mysql restart
+```
+
+The next steps will take place in the MySQL shell.
+We need to grant privileges to the slave:
+
+```mysql
+GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' 
+IDENTIFIED BY 'password';   
+
+FLUSH PRIVILEGES;  
+
+USE newdatabase;
+```
+
+Lock the database to prevent any new changes:
+
+```mysql
+FLUSH TABLES WITH READ LOCK;
+```
+
+Now we need to get the filename and location from where the slave will start replicating,
+enter next command, and copy the result:
+
+```mysql
+SHOW MASTER STATUS;
+```
+
+Result will look like this:
+
+```
+mysql> show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000018 |   133772 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+```
+
+Now open up a new terminal tab/window to the master's MySQL.
+Reason is, we've just locked the databases for future changes so we can replicate it,
+If we make any changes in the current window, the DB will be auto-unlocked.
+
+Export the DB using `mysqldump`.
+In shell, type:
+
+```bash
+mysqldump -u root -p --opt newdatabase > newdatabase.sql
+```
+
+Now return to the original terminal window, unlock the DB and exit.  
+In mysql, type:
+
+```mysql
+UNLOCK TABLES;
+
+\q;
+```
+---
+# Step 2 - Configure Slave
+
+Log into slave server's *MySQL*, create a new DB:
+
+```mysql
+CREATE DATABASE newdatabase;
+
+\q;
 ```

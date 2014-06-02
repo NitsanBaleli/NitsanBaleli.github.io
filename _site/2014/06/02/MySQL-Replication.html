@@ -60,11 +60,9 @@
 
 <h1>Step 1 - Configure Master</h1>
 
-<p>Open the mysql configuration file on the Master:
-<code>bash
-sudo nano /etc/mysql/my.cnf
-</code></p>
-
+<p>Open the mysql configuration file on the Master:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">sudo nano /etc/mysql/my.cnf
+</code></pre></div>
 <p>The first step is to change the bind-address of the server to the actual WAN/LAN address.
 Change the line that looks like this:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">bind</span>-address <span class="o">=</span> 127.0.0.1
@@ -73,7 +71,7 @@ Change the line that looks like this:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">bind</span>-address <span class="o">=</span> x.x.x.x
 </code></pre></div>
 <p>Next we need to set server-id, and give our server a unique number.
-change this line - make sure its not commented (remove the # from the head of the line).
+change this line - make sure its not commented (remove the # preceding it).
 Make sure this number is unique to this server</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">server-id <span class="o">=</span> 1
 </code></pre></div>
@@ -81,13 +79,62 @@ Make sure this number is unique to this server</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">log_bin</span> <span class="o">=</span> /var/log/mysql/mysql-bin.log
 </code></pre></div>
 <p>Now we need to tell the server what DB we want replicated.
-This line can be repeated for use of more than one DB:</p>
-<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">binlog_do_db</span> <span class="o">=</span> DBtoReplicate
+This line can be repeated for use of more than one DB.<br>
+(<strong>Leaving this line commented will result in replication of the all databases without any additional editing of the configuration file.</strong>)</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">binlog_do_db</span> <span class="o">=</span> newdatabase
 </code></pre></div>
 <p>Save and exit the configuration file.</p>
 
 <p>Restart MySQL:</p>
 <div class="highlight"><pre><code class="language-bash" data-lang="bash">sudo service mysql restart
+</code></pre></div>
+<p>The next steps will take place in the MySQL shell.
+We need to grant privileges to the slave:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="k">GRANT</span> <span class="n">REPLICATION</span> <span class="n">SLAVE</span> <span class="k">ON</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">&#39;slave_user&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span> 
+<span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">&#39;password&#39;</span><span class="p">;</span>   
+
+<span class="n">FLUSH</span> <span class="n">PRIVILEGES</span><span class="p">;</span>  
+
+<span class="k">USE</span> <span class="n">newdatabase</span><span class="p">;</span>
+</code></pre></div>
+<p>Lock the database to prevent any new changes:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="n">FLUSH</span> <span class="kp">TABLES</span> <span class="k">WITH</span> <span class="k">READ</span> <span class="k">LOCK</span><span class="p">;</span>
+</code></pre></div>
+<p>Now we need to get the filename and location from where the slave will start replicating,
+enter next command, and copy the result:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="k">SHOW</span> <span class="n">MASTER</span> <span class="n">STATUS</span><span class="p">;</span>
+</code></pre></div>
+<p>Result will look like this:</p>
+<div class="highlight"><pre><code class="language-text" data-lang="text">mysql&gt; show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000018 |   133772 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+</code></pre></div>
+<p>Now open up a new terminal tab/window to the master&#39;s MySQL.
+Reason is, we&#39;ve just locked the databases for future changes so we can replicate it,
+If we make any changes in the current window, the DB will be auto-unlocked.</p>
+
+<p>Export the DB using <code>mysqldump</code>.
+In shell, type:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">mysqldump -u root -p --opt newdatabase &gt; newdatabase.sql
+</code></pre></div>
+<p>Now return to the original terminal window, unlock the DB and exit.<br>
+In mysql, type:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="k">UNLOCK</span> <span class="kp">TABLES</span><span class="p">;</span>
+
+<span class="err">\</span><span class="n">q</span><span class="p">;</span>
+</code></pre></div>
+<hr>
+
+<h1>Step 2 - Configure Slave</h1>
+
+<p>Log into slave server&#39;s <em>MySQL</em>, create a new DB:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">newdatabase</span><span class="p">;</span>
+
+<span class="err">\</span><span class="n">q</span><span class="p">;</span>
 </code></pre></div>
 </article>
 <div id="disqus_thread"></div>
