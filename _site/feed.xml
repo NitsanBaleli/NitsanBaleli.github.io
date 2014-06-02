@@ -6,8 +6,8 @@
     <atom:link href="http://nitsanbaleli.github.io//feed.xml" rel="self" type="application/rss+xml" />
     <description>A place to share my thoughts and code</description>
     <language>en-us</language>
-    <pubDate>Mon, 02 Jun 2014 13:41:50 +0300</pubDate>
-    <lastBuildDate>Mon, 02 Jun 2014 13:41:50 +0300</lastBuildDate>
+    <pubDate>Mon, 02 Jun 2014 14:35:20 +0300</pubDate>
+    <lastBuildDate>Mon, 02 Jun 2014 14:35:20 +0300</lastBuildDate>
 
     
       <item>
@@ -96,7 +96,48 @@ In mysql, type:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-mysql&quot; data-lang=&quot;mysql&quot;&gt;&lt;span class=&quot;k&quot;&gt;CREATE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DATABASE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newdatabase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
 
 &lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;q&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Import the database created in previous step from Master DB:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mysql -u root -p newdatabase &amp;lt; /path/to/newdatabase.sql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now configure slave just like we configured Master, with a few changes:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;sudo nano /etc/mysql/my.cnf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Give a unique id (Master&amp;#39;s Id was 1, slave should be different):&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;server-id&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 2
+relay-log&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/log/mysql/mysql-relay-bin.log
+&lt;span class=&quot;nv&quot;&gt;log_bin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; /var/log/mysql/mysql-bin.log
+&lt;span class=&quot;nv&quot;&gt;binlog_do_db&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; newdatabase
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Restart MySQL:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;service mysql restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Enable replication (remember to put the right details from previous steps):&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;mysql -u root -p
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-mysql&quot; data-lang=&quot;mysql&quot;&gt;&lt;span class=&quot;k&quot;&gt;CHANGE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MASTER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;TO&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;MASTER_HOST&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;12.34.56.789&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MASTER_USER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;slave_user&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MASTER_PASSWORD&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;password&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MASTER_LOG_FILE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;mysql-bin.000001&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;MASTER_LOG_POS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;mi&quot;&gt;107&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Check the status of the slave:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-mysql&quot; data-lang=&quot;mysql&quot;&gt;&lt;span class=&quot;n&quot;&gt;START&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SLAVE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;SHOW&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SLAVE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;STATUS&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;G&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;If there is an error in connecting to master, you might need to start slave with the following command:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-mysql&quot; data-lang=&quot;mysql&quot;&gt;&lt;span class=&quot;kt&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GLOBAL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SQL_SLAVE_SKIP_COUNTER&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;SLAVE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;START&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;In-depth details of the replication process can be found in the &lt;a href=&quot;http://dev.mysql.com/doc/refman/5.0/en/replication-howto.html&quot;&gt;Official Documentation&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;hr&gt;
+
+&lt;p&gt;&lt;em&gt;Found an error?&lt;br&gt;
+Got a suggestion?&lt;br&gt;
+Leave a comment below.&lt;/em&gt;&lt;/p&gt;
+</description>
       </item>
     
       <item>

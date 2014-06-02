@@ -136,6 +136,47 @@ In mysql, type:</p>
 
 <span class="err">\</span><span class="n">q</span><span class="p">;</span>
 </code></pre></div>
+<p>Import the database created in previous step from Master DB:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">mysql -u root -p newdatabase &lt; /path/to/newdatabase.sql
+</code></pre></div>
+<p>Now configure slave just like we configured Master, with a few changes:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">sudo nano /etc/mysql/my.cnf
+</code></pre></div>
+<p>Give a unique id (Master&#39;s Id was 1, slave should be different):</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">server-id<span class="o">=</span> 2
+relay-log<span class="o">=</span> /var/log/mysql/mysql-relay-bin.log
+<span class="nv">log_bin</span><span class="o">=</span> /var/log/mysql/mysql-bin.log
+<span class="nv">binlog_do_db</span> <span class="o">=</span> newdatabase
+</code></pre></div>
+<p>Restart MySQL:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">service mysql restart
+</code></pre></div>
+<p>Enable replication (remember to put the right details from previous steps):</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">mysql -u root -p
+</code></pre></div><div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="k">CHANGE</span> <span class="n">MASTER</span> <span class="k">TO</span> 
+<span class="n">MASTER_HOST</span><span class="o">=</span><span class="s1">&#39;12.34.56.789&#39;</span><span class="p">,</span>
+<span class="n">MASTER_USER</span><span class="o">=</span><span class="s1">&#39;slave_user&#39;</span><span class="p">,</span>
+<span class="n">MASTER_PASSWORD</span><span class="o">=</span><span class="s1">&#39;password&#39;</span><span class="p">,</span>
+<span class="n">MASTER_LOG_FILE</span><span class="o">=</span><span class="s1">&#39;mysql-bin.000001&#39;</span><span class="p">,</span>
+<span class="n">MASTER_LOG_POS</span><span class="o">=</span>  <span class="mi">107</span><span class="p">;</span>
+</code></pre></div>
+<p>Check the status of the slave:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="n">START</span> <span class="n">SLAVE</span><span class="p">;</span>
+
+<span class="k">SHOW</span> <span class="n">SLAVE</span> <span class="n">STATUS</span><span class="err">\</span><span class="n">G</span><span class="p">;</span>
+</code></pre></div>
+<p>If there is an error in connecting to master, you might need to start slave with the following command:</p>
+<div class="highlight"><pre><code class="language-mysql" data-lang="mysql"><span class="kt">SET</span> <span class="n">GLOBAL</span> <span class="n">SQL_SLAVE_SKIP_COUNTER</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> 
+<span class="n">SLAVE</span> <span class="n">START</span><span class="p">;</span> 
+</code></pre></div>
+<p><strong>In-depth details of the replication process can be found in the <a href="http://dev.mysql.com/doc/refman/5.0/en/replication-howto.html">Official Documentation</a></strong>.</p>
+
+<hr>
+
+<p><em>Found an error?<br>
+Got a suggestion?<br>
+Leave a comment below.</em></p>
+
 </article>
 <div id="disqus_thread"></div>
    <script type="text/javascript">
