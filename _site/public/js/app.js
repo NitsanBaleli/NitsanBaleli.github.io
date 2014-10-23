@@ -1,0 +1,1 @@
+!function(e,a,n,t,c,i,s){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,i=a.createElement(n),s=a.getElementsByTagName(n)[0],i.async=1,i.src=t,s.parentNode.insertBefore(i,s)}(window,document,"script","//www.google-analytics.com/analytics.js","ga"),ga("create","UA-50560992-1","nitsanbaleli.github.io"),ga("send","pageview");
