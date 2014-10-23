@@ -1,9 +1,0 @@
-markdown: redcarpet
-pygments: true
-permalink: date
-
-url: http://nitsanbaleli.github.io/
-baseurl: 
-
-redcarpet:
-  extensions: [strikethrough, tables]
