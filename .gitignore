@@ -1,0 +1,5 @@
+*.xml
+*.log
+*.json
+gulpfile.js
+google*.html

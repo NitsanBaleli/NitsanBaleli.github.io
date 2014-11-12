@@ -6,9 +6,59 @@
     <atom:link href="http://nitsanbaleli.github.io//feed.xml" rel="self" type="application/rss+xml" />
     <description>A place to share my thoughts and code</description>
     <language>en-us</language>
-    <pubDate>Thu, 23 Oct 2014 18:06:14 +0300</pubDate>
-    <lastBuildDate>Thu, 23 Oct 2014 18:06:14 +0300</lastBuildDate>
+    <pubDate>Wed, 12 Nov 2014 12:38:29 +0200</pubDate>
+    <lastBuildDate>Wed, 12 Nov 2014 12:38:29 +0200</lastBuildDate>
 
+    
+      <item>
+        <title>Create Sublime Text Snippets</title>
+        <link>http://nitsanbaleli.github.io//2014/11/12/sublime-text-snippets.html</link>
+        <pubDate>Wed, 12 Nov 2014 00:00:00 +0200</pubDate>
+        <author>Nitsan Baleli</author>
+        <description>&lt;blockquote&gt;
+&lt;p&gt;Whether you are coding or writing the next vampire best-seller, you’re likely to need certain short fragments of text again and again. Use snippets to save yourself tedious typing. Snippets are smart templates that will insert text for you and adapt it to their context.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Hit &lt;code&gt;Tools -&amp;gt; New Snippet...&lt;/code&gt; from the top menubar.
+A new file will open, with this in it:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;snippet&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;content&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;![CDATA[&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;Hello, ${1:this} is a ${2:snippet}.&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;]]&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/content&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- &amp;lt;tabTrigger&amp;gt;hello&amp;lt;/tabTrigger&amp;gt; --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Optional: Set a scope to limit where the snippet will trigger --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- &amp;lt;scope&amp;gt;source.python&amp;lt;/scope&amp;gt; --&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/snippet&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Snippets use markers &lt;code&gt;${1}&lt;/code&gt;  to cycle through positions within the snippet by pressing the Tab key.
+&lt;code&gt;{$1}&lt;/code&gt; is the first marker, &lt;code&gt;{2}&lt;/code&gt; is the second, etc..&lt;/p&gt;
+
+&lt;p&gt;The above example also uses &lt;code&gt;placeholders&lt;/code&gt; (&lt;code&gt;${1:this}&lt;/code&gt;), so if you hit &lt;code&gt;tab&lt;/code&gt; it&amp;#39;ll move to the next placeholder and select it.&lt;/p&gt;
+
+&lt;p&gt;You need to un-comment &lt;code&gt;&amp;lt;tabTrigger&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;scope&amp;gt;&lt;/code&gt; to control which key executes the snippet, and on what files will it work on.&lt;/p&gt;
+
+&lt;p&gt;Example of a snippet for Javascript files, that will replace &lt;code&gt;log&lt;/code&gt; with &lt;code&gt;console.log();&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-xml&quot; data-lang=&quot;xml&quot;&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;snippet&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;content&amp;gt;&lt;/span&gt;&lt;span class=&quot;cp&quot;&gt;&amp;lt;![CDATA[&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;console.log(${1});&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;${2}&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;]]&amp;gt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;/content&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Optional: Set a tabTrigger to define how to trigger the snippet --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;tabTrigger&amp;gt;&lt;/span&gt;log&lt;span class=&quot;nt&quot;&gt;&amp;lt;/tabTrigger&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;&amp;lt;!-- Optional: Set a scope to limit where the snippet will trigger --&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;scope&amp;gt;&lt;/span&gt;source.js&lt;span class=&quot;nt&quot;&gt;&amp;lt;/scope&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/snippet&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;hr&gt;
+
+&lt;h2&gt;Finding the right scope&lt;/h2&gt;
+
+&lt;p&gt;To find out what &lt;code&gt;scope&lt;/code&gt; to assign the snippet to, use &lt;code&gt;ctrl+alt+shift+p&lt;/code&gt;, it&amp;#39;ll show the current scope on the status bar.&lt;/p&gt;
+
+&lt;p&gt;For example: &lt;code&gt;text.html.markdown&lt;/code&gt; for &lt;code&gt;.md&lt;/code&gt; (markdown) files.&lt;/p&gt;
+</description>
+      </item>
     
       <item>
         <title>MySQL Replication (Master->Slave)</title>
