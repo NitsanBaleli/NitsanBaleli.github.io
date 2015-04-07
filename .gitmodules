@@ -1,3 +1,0 @@
-[submodule "testing/gmaps"]
-	path = testing/gmaps
-	url = git@github.com:NitsanBaleli/gmaps.git
