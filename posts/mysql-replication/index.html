@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><title> MySQL Replication (Master-&gt;Slave)</title><meta name="description" content=" Replication enables data from one MySQL database server (the master) to be replicated to one or more MySQL database servers (the slaves)"><link rel="canonical" href="https://nitsanbaleli.github.io//posts/mysql-replication/"><link rel="alternate" type="application/rss+xml" title="My Technical Blog" href="https://nitsanbaleli.github.io//feed.xml"><link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700|Roboto+Condensed:700&subset=latin' rel='stylesheet' type='text/css'><link rel="stylesheet" href="/assets/css/main.css"><meta property="og:url" content="https://nitsanbaleli.github.io//posts/mysql-replication/"><meta property="og:type" content="website"><meta property="og:title" content="MySQL Replication (Master->Slave)"><meta property="og:description" content="MySQL Replication (Master->Slave)"><meta property="og:site_name" content="My Technical Blog"><meta name="twitter:card" content="summary"><meta name="twitter:url" content="https://nitsanbaleli.github.io//posts/mysql-replication/"><meta name="twitter:title" content="MySQL Replication (Master->Slave)"><meta name="twitter:description" content="MySQL Replication (Master->Slave)"><meta property="og:image" content="https://nitsanbaleli.github.io/assets/images/owl.jpg"><meta name="twitter:image" content="https://nitsanbaleli.github.io/assets/images/owl.jpg"><body><div id="shadow"></div><header class="main-header content-wrapper"> <input type="checkbox" id="menu-checkbox" /><nav class="center-wrapper nav-main"> <a class="blog-logo" href="/">My Technical Blog</a> <a href="/about/">About</a> <a href="/posts/">Archive</a> <label for="menu-checkbox" class="toggle-button" data-open="☰" data-close="☰" onclick></label></nav></header><aside class="sidebar" role="note" style="background-image: url(https://nitsanbaleli.github.io/assets/images/owl.jpg)"><div class="cover"><div class="cover-text"><div class="heading"> <a href="/posts/#back-end">back-end</a></div><p> MySQL Replication (Master->Slave)</div></div><div id="switcher"></div></aside><main class="content-wrapper"><article class="post"><h1 class="post-title">MySQL Replication (Master->Slave)</h1><p class="post-meta"> <time datetime="2014-06-02">02-06-2014</time> &nbsp;/&nbsp; <span>Nitsan Baleli</span><div class="post-content"><blockquote><p>Replication enables data from one MySQL database server (the master) to be replicated to one or more MySQL database servers (the slaves)</blockquote><h1 id="step-1---configure-master">Step 1 - Configure Master</h1><p>Open the mysql configuration file on the Master:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sudo nano /etc/mysql/my.cnf
+</code></pre></div><p>The first step is to change the bind-address of the server to the actual WAN/LAN address. Change the line that looks like this:<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">bind</span>-address <span class="o">=</span> 127.0.0.1
+</code></pre></div><p>To use the right IP (replace x.x.x.x with the real number)<div class="language-bash highlighter-rouge"><pre class="highlight"><code><span class="nb">bind</span>-address <span class="o">=</span> x.x.x.x
+</code></pre></div><p>Next we need to set server-id, and give our server a unique number. change this line - make sure its not commented (remove the # preceding it). Make sure this number is unique to this server<div class="language-bash highlighter-rouge"><pre class="highlight"><code>server-id <span class="o">=</span> 1
+</code></pre></div><p>Change log_bin value to point to the log file, where all changes are kept, so replication can take place:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>log_bin <span class="o">=</span> /var/log/mysql/mysql-bin.log
+</code></pre></div><p>Now we need to tell the server what DB we want replicated. This line can be repeated for use of more than one DB.<br /> (<strong>Leaving this line commented will result in replication of the all databases without any additional editing of the configuration file.</strong>)<div class="language-bash highlighter-rouge"><pre class="highlight"><code>binlog_do_db <span class="o">=</span> newdatabase
+</code></pre></div><p>Save and exit the configuration file.<p>Restart MySQL:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sudo service mysql restart
+</code></pre></div><p>The next steps will take place in the MySQL shell. We need to grant privileges to the slave:<pre><code class="language-mysql">GRANT REPLICATION SLAVE ON *.* TO 'slave_user'@'%' 
+IDENTIFIED BY 'password';   
+
+FLUSH PRIVILEGES;  
+
+USE newdatabase;
+</code></pre><p>Lock the database to prevent any new changes:<pre><code class="language-mysql">FLUSH TABLES WITH READ LOCK;
+</code></pre><p>Now we need to get the filename and location from where the slave will start replicating, enter next command, and copy the result:<pre><code class="language-mysql">SHOW MASTER STATUS;
+</code></pre><p>Result will look like this:<div class="highlighter-rouge"><pre class="highlight"><code>mysql&gt; show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000018 |   133772 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+</code></pre></div><p>Now open up a new terminal tab/window to the master’s MySQL. Reason is, we’ve just locked the databases for future changes so we can replicate it, If we make any changes in the current window, the DB will be auto-unlocked.<p>Export the DB using <code class="highlighter-rouge">mysqldump</code>. In shell, type:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>mysqldump -u root -p --opt newdatabase &gt; newdatabase.sql
+</code></pre></div><p>Now return to the original terminal window, unlock the DB and exit.<br /> In mysql, type:<pre><code class="language-mysql">UNLOCK TABLES;
+
+\q;
+</code></pre><hr /><h1 id="step-2---configure-slave">Step 2 - Configure Slave</h1><p>Log into slave server’s <em>MySQL</em>, create a new DB:<pre><code class="language-mysql">CREATE DATABASE newdatabase;
+
+\q;
+</code></pre><p>Import the database created in previous step from Master DB:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>mysql -u root -p newdatabase &lt; /path/to/newdatabase.sql
+</code></pre></div><p>Now configure slave just like we configured Master, with a few changes:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>sudo nano /etc/mysql/my.cnf
+</code></pre></div><p>Give a unique id (Master’s Id was 1, slave should be different):<div class="language-bash highlighter-rouge"><pre class="highlight"><code>server-id<span class="o">=</span> 2
+relay-log<span class="o">=</span> /var/log/mysql/mysql-relay-bin.log
+<span class="nv">log_bin</span><span class="o">=</span> /var/log/mysql/mysql-bin.log
+binlog_do_db <span class="o">=</span> newdatabase
+</code></pre></div><p>Restart MySQL:<div class="language-bash highlighter-rouge"><pre class="highlight"><code>service mysql restart
+</code></pre></div><p>Enable replication (remember to put the right details from previous steps):<div class="language-bash highlighter-rouge"><pre class="highlight"><code>mysql -u root -p
+</code></pre></div><pre><code class="language-mysql">CHANGE MASTER TO 
+MASTER_HOST='12.34.56.789',
+MASTER_USER='slave_user',
+MASTER_PASSWORD='password',
+MASTER_LOG_FILE='mysql-bin.000001',
+MASTER_LOG_POS=  107;
+</code></pre><p>Check the status of the slave:<pre><code class="language-mysql">START SLAVE;
+
+SHOW SLAVE STATUS\G;
+</code></pre><p>If there is an error in connecting to master, you might need to start slave with the following command:<pre><code class="language-mysql">SET GLOBAL SQL_SLAVE_SKIP_COUNTER = 1; 
+SLAVE START; 
+</code></pre><p><strong>In-depth details of the replication process can be found in the <a href="http://dev.mysql.com/doc/refman/5.0/en/replication-howto.html">Official Documentation</a></strong>.<hr /><p><em>Found an error?<br /> Got a suggestion?<br /> Leave a comment below.</em><div class="post-links"> <a class="link-to-post" href="/posts/sublime-text-snippets/"> <span class="link-to-post__next">&#10535; &nbsp;Next post</span> <span class="link-to-post__title">Create Sublime Text Snippets</span> </a> <a class="link-to-post" href="/posts/sass-intro/"> <span class="link-to-post__prev">&#10535; &nbsp;Previous post</span> <span class="link-to-post__title">Introduction to Sass (Syntactically Awesome StyleSheets)</span> </a></div></div></article></main><footer class="blog-footer content-wrapper"><p>&copy; <span class="full-year"></span> My Technical Blog</footer><script src="/assets/js/scripts.js"></script>

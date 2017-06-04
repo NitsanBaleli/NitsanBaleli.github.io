@@ -1,4 +1,4 @@
-#My own little blog
+## My Blog
 
-Curious webdev from sunny Israel
+Just another tech blog.
 
